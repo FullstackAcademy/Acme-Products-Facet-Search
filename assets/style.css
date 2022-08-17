@@ -1,0 +1,31 @@
+body {
+  font-family: verdana;
+  margin: 0;
+}
+
+nav {
+  display: flex;
+  background-color: olive;
+  justify-content: space-around;
+}
+
+nav a {
+  margin: 1rem;
+  color: cornSilk;
+}
+
+main {
+  padding: 1rem;
+}
+
+#search {
+  display: flex;
+}
+
+#search > section {
+  flex: 1;
+}
+
+li.selected {
+  border: solid 1px olive;
+}
