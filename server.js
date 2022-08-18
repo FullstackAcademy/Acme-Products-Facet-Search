@@ -61,6 +61,9 @@ const setup = async()=> {
       Product.create({ name: 'bazz', colorId: blue.id, sizeId: lg.id}),
       Product.create({ name: 'quq', colorId: blue.id, sizeId: lg.id}),
       Product.create({ name: 'quux', colorId: green.id, sizeId: sm.id}),
+      Product.create({ name: 'glorb', colorId: green.id, sizeId: lg.id}),
+      Product.create({ name: 'klork', colorId: green.id, sizeId: lg.id}),
+      Product.create({ name: 'gulp', colorId: green.id, sizeId: md.id}),
     ]);
     const port = process.env.PORT || 3000;
     app.listen(port, ()=> console.log(`listening on port ${port}`));
