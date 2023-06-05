@@ -1,10 +1,11 @@
 import { createRoot } from 'react-dom/client';
 import React, { Component } from 'react';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
-import { connect, Provider } from 'react-redux';
+import { Provider, useSelector, useDispatch } from 'react-redux';
 import logger from 'redux-logger';
 import axios from 'axios';
-import { Route, HashRouter as Router, Link } from 'react-router-dom';
+import { useParams, Routes, Route, HashRouter as Router, Link } from 'react-router-dom';
+import thunk from 'redux-thunk';
 
 const productsReducer = (state=[], action)=> {
   if(action.type === 'SET_PRODUCTS'){
@@ -13,20 +14,22 @@ const productsReducer = (state=[], action)=> {
   return state;
 };
 
+const fetchProducts = ()=> {
+  return async(dispatch)=> {
+    const products = (await axios.get('/products')).data;
+    dispatch({type: 'SET_PRODUCTS', products});
+  }
+};
+
 const reducer = combineReducers({
   products: productsReducer
 });
 
-const store = createStore(reducer, applyMiddleware(logger));
+const store = createStore(reducer, applyMiddleware(thunk, logger));
 
-const Search = connect(
-  state => {
-    return {
-      products: state.products
-    };
-  }
-)(({ products, match })=> {
-  const filter = match.params.filter ? JSON.parse(match.params.filter): {};
+
+const Search = ()=> {
+  const { products } = useSelector(state => state);
 
   return (
     <div id='search'>
@@ -63,42 +66,29 @@ const Search = connect(
       </section>
     </div>
   );
-});
+}
 
-const App = connect(
-  state => {
-    return {
-      count: state.products.length
-    };
-  },
-  dispatch => {
-    return {
-      fetchProducts: async()=> {
-        const products = (await axios.get('/products')).data;
-        dispatch({type: 'SET_PRODUCTS', products});
-      }
-    };
-  }
-)(class App extends Component{
-  componentDidMount(){
-    this.props.fetchProducts();
-  }
-  render(){
-    const { count } = this.props;
+
+const App = ()=> {
+  const dispatch = useDispatch();
+  const { products } = useSelector(state => state);
+  React.useEffect(()=> {
+    dispatch(fetchProducts());
+  }, []);
     return (
       <div>
         <nav>
           <Link to='/'>Home</Link>
-          <Link to='/search'>Search</Link>
         </nav>
         <main>
-          <h1>Acme Products ({ count })</h1>
-          <Route path='/Search/:filter?' component={ Search } />
+          <h1>Acme Products ({ products.length })</h1>
+          <Routes>
+            <Route path='/' element={ <Search /> } />
+          </Routes>
         </main>
       </div>
     );
-  }
-});
+}
 
 const root = createRoot(document.querySelector('#root'));
 

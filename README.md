@@ -1,4 +1,4 @@
 - npm i
 - create database **acme-db**
-- npm run start:dev
-- deployed site https://acme-products-facets.herokuapp.com/
+- npm run start:server
+- npm run build:dev
